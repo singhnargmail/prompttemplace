@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Create Prompt - Prompt Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item active">Create Prompt</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">
+                    <i class="fas fa-plus"></i> Create New Prompt Definition
+                </h2>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="prompt_type" class="form-label">Prompt Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="prompt_type" name="prompt_type" required>
+                            <option value="">Select prompt type...</option>
+                            <option value="persona prompt">Persona Prompt</option>
+                            <option value="advanced prompt">Advanced Prompt</option>
+                        </select>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            Choose the type of prompt you want to create.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="prompt_value" class="form-label">Initial Prompt Value <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="prompt_value" name="prompt_value" rows="8" 
+                                  placeholder="Enter the initial prompt value..." required></textarea>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            This will be created as version 1 in draft status.
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Note:</strong> 
+                        <ul class="mb-0 mt-2">
+                            <li>A new prompt definition will be created with one initial version</li>
+                            <li>The initial version will be in <strong>draft</strong> status</li>
+                            <li>You can edit the prompt value later if it's in draft status</li>
+                            <li>Once created, the prompt type cannot be modified</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Create Prompt
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

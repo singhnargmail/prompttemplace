@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Version {{ version.version }} - Prompt Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('prompt_detail', prompt_id=version.prompt_id) }}">{{ version.prompt_def.prompt_type.title() }}</a></li>
+                <li class="breadcrumb-item active">Version {{ version.version }}</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-code-branch"></i>
+                    Version {{ version.version }}
+                    {% if version.status == 'Active' %}
+                        <span class="badge bg-success ms-2">{{ version.status }}</span>
+                    {% elif version.status == 'draft' %}
+                        <span class="badge bg-warning ms-2">{{ version.status }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary ms-2">{{ version.status }}</span>
+                    {% endif %}
+                </h2>
+                <div class="btn-group" role="group">
+                    {% if version.status == 'draft' %}
+                        <a href="{{ url_for('edit_version', version_id=version.id) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#publishModal">
+                            <i class="fas fa-paper-plane"></i> Publish
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-info-circle"></i> Version Information</h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Prompt Type:</th>
+                                <td>{{ version.prompt_def.prompt_type.title() }}</td>
+                            </tr>
+                            <tr>
+                                <th>Version:</th>
+                                <td>{{ version.version }}</td>
+                            </tr>
+                            <tr>
+                                <th>Status:</th>
+                                <td>
+                                    {% if version.status == 'Active' %}
+                                        <span class="badge bg-success">{{ version.status }}</span>
+                                    {% elif version.status == 'draft' %}
+                                        <span class="badge bg-warning">{{ version.status }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ version.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Created Date:</th>
+                                <td>{{ version.createddate.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            </tr>
+                            {% if version.published_date %}
+                            <tr>
+                                <th>Published Date:</th>
+                                <td>{{ version.published_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if version.published_by %}
+                            <tr>
+                                <th>Published By:</th>
+                                <td>{{ version.published_by }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h5><i class="fas fa-file-alt"></i> Prompt Value</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <pre class="mb-0" style="white-space: pre-wrap; word-wrap: break-word;">{{ version.prompt_value }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Publish Modal -->
+{% if version.status == 'draft' %}
+<div class="modal fade" id="publishModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('publish_version', version_id=version.id) }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Publish Version {{ version.version }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Warning:</strong> Publishing this version will:
+                        <ul class="mb-0 mt-2">
+                            <li>Set this version to <strong>Active</strong> status</li>
+                            <li>Set all other versions of this prompt to <strong>Inactive</strong> status</li>
+                            <li>Set the published date to current time</li>
+                        </ul>
+                    </div>
+                    <div class="mb-3">
+                        <label for="published_by" class="form-label">Published By</label>
+                        <input type="text" class="form-control" id="published_by" name="published_by" 
+                               placeholder="Enter your name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-paper-plane"></i> Publish Version
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
